@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مدیریت شیفت بیمارستان ناظران</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f3f6fa;
+      color: #263445;
+    }
+
+    header {
+      background: #123b5d;
+      color: white;
+      padding: 22px 16px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 13px;
+      color: #d7e6f2;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 22px auto;
+      padding: 0 14px;
+    }
+
+    .welcome {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px #173b5d0c;
+    }
+
+    .welcome h2 {
+      margin-top: 0;
+      font-size: 19px;
+    }
+
+    .welcome p {
+      line-height: 2;
+      color: #637386;
+      font-size: 14px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .field {
+      background: white;
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 9px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d7e0e9;
+      border-radius: 8px;
+      background: white;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .green { background: #d9f4e2; }
+    .orange { background: #fff0cc; }
+    .red { background: #ffe0e0; }
+
+    .section-title {
+      font-size: 18px;
+      margin: 24px 0 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 13px;
+      border: 1px solid #e2e8ef;
+      background: white;
+    }
+
+    .card.green-card {
+      background: #f0fbf3;
+      border-color: #b5e6c3;
+    }
+
+    .card.orange-card {
+      background: #fff9eb;
+      border-color: #f2d58e;
+    }
+
+    .card.red-card {
+      background: #fff1f1;
+      border-color: #f2b5b5;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .count {
+      font-size: 25px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .card p {
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .add {
+      background: #176b49;
+      color: white;
+    }
+
+    .remove {
+      background: #e6ebf1;
+      color: #263445;
+    }
+
+    .notice {
+      background: #eaf3fc;
+      border-right: 4px solid #2875b9;
+      padding: 16px;
+      border-radius: 8px;
+      line-height: 2;
+      font-size: 13px;
+      margin-top: 22px;
+    }
+
+    footer {
+      text-align: center;
+      color: #7a8998;
+      font-size: 12px;
+      padding: 25px 12px;
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 19px;
+      }
+
+      .welcome {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>سامانه مدیریت شیفت بیمارستان ناظران</h1>
+  <p>برنامه‌ریزی، توزیع شیفت و مدیریت ظرفیت نیروی انسانی</p>
+</header>
+
+<main>
+
+  <section class="welcome">
+    <h2>داشبورد برنامه‌ریزی شیفت‌ها</h2>
+    <p>
+      به سامانه مدیریت شیفت خوش آمدید.
+      در این بخش می‌توانید ظرفیت موردنیاز هر شیفت را بررسی کنید
+      و وضعیت تأمین نیروی انسانی را ببینید.
+    </p>
+  </section>
+
+  <section class="filters">
+
+    <div class="field">
+      <label for="group">گروه کارکنان</label>
+      <select id="group">
+        <option value="imaging">تکنسین‌های تصویربرداری</option>
+        <option value="admin">کارکنان اداری</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="shift">نوع شیفت</label>
+      <select id="shift">
+        <option value="morning">صبح</option>
+        <option value="evening">عصر</option>
+        <option value="night">شب</option>
+        <option value="holiday">تعطیلات رسمی</option>
+      </select>
+    </div>
+
+  </section>
+
+  <div class="legend">
+    <span><i class="dot orange"></i> کمبود نیرو</span>
+    <span><i class="dot green"></i> ظرفیت تکمیل</span>
+    <span><i class="dot red"></i> بیش از ظرفیت</span>
+  </div>
+
+  <h2 class="section-title">وضعیت ظرفیت شیفت انتخاب‌شده</h2>
+
+  <section id="cards" class="cards"></section>
+
+  <section class="notice">
+    <strong>توجه:</strong>
+    این نسخه، نمونه اولیه رابط کاربری است.
+    تغییر تعداد نیروها در این صفحه صرفاً برای آزمایش نمایش ظرفیت است.
+    هنوز اطلاعات در پایگاه داده ذخیره نمی‌شوند و ورود امن کارکنان
+    یا ثبت نهایی شیفت‌ها پیاده‌سازی نشده است.
+  </section>
+
+</main>
+
+<footer>
+  سامانه مدیریت شیفت بیمارستان ناظران
+  <br>
+  نسخه آزمایشی ۰.۱
+</footer>
+
+<script>
+  const capacities = {
+    imaging: {
+      morning: [
+        { name: "تکنسین رادیولوژی", required: 2 },
+        { name: "تکنسین سی‌تی‌اسکن", required: 1 },
+        { name: "تکنسین ام‌آر‌آی", required: 1 }
+      ],
+      evening: [
+        { name: "تکنسین رادیولوژی", required: 1 },
+        { name: "تکنسین سی‌تی‌اسکن", required: 1 },
+        { name: "تکنسین ام‌آر‌آی", required: 1 }
+      ],
+      night: [
+        { name: "تکنسین سی‌تی‌اسکن", required: 1 },
+        { name: "تکنسین ام‌آر‌آی", required: 1 }
+      ],
+      holiday: [
+        { name: "تکنسین سی‌تی‌اسکن", required: 1 },
+        { name: "تکنسین ام‌آر‌آی", required: 1 }
+      ]
+    },
+
+    admin: {
+      morning: [
+        { name: "پذیرش", required: 5 },
+        { name: "جوابدهی", required: 1 },
+        { name: "اپراتور", required: 1 },
+        { name: "آماده‌سازی ام‌آر‌آی", required: 1 },
+        { name: "آماده‌سازی سی‌تی‌اسکن", required: 2 },
+        { name: "آماده‌سازی سونوگرافی", required: 3 }
+      ],
+      evening: [
+        { name: "پذیرش", required: 3 },
+        { name: "جوابدهی", required: 1 },
+        { name: "اپراتور", required: 1 },
+        { name: "آماده‌سازی سی‌تی‌اسکن", required: 1 },
+        { name: "آماده‌سازی ام‌آر‌آی", required: 1 }
+      ],
+      night: [
+        { name: "پذیرش", required: 2 },
+        { name: "آماده‌سازی ام‌آر‌آی", required: 1 }
+      ],
+      holiday: [
+        { name: "پذیرش", required: 2 },
+        { name: "آماده‌سازی ام‌آر‌آی", required: 1 }
+      ]
+    }
+  };
+
+  const assigned = {};
+
+  function getKey(group, shift, job) {
+    return group + "-" + shift + "-" + job;
+  }
+
+  function getAssigned(group, shift, job, required) {
+    const key = getKey(group, shift, job);
+
+    if (assigned[key] === undefined) {
+      assigned[key] = required;
+    }
+
+    return assigned[key];
+  }
+
+  function render() {
+    const group = document.getElementById("group").value;
+    const shift = document.getElementById("shift").value;
+    const jobs = capacities[group][shift];
+    const container = document.getElementById("cards");
+
+    container.innerHTML = "";
+
+    jobs.forEach(function(job) {
+      const count = getAssigned(
+        group, shift, job.name, job.required
+      );
+
+      let className = "green-card";
+      let status = "ظرفیت تکمیل است";
+
+      if (count < job.required) {
+        className = "orange-card";
+        status = "کمبود " + (job.required - count) + " نفر";
+      } else if (count > job.required) {
+        className = "red-card";
+        status = (count - job.required) + " نفر بیشتر از ظرفیت";
+      }
+
+      const card = document.createElement("article");
+      card.className = "card " + className;
+
+      const title = document.createElement("h3");
+      title.textContent = job.name;
+
+      const countText = document.createElement("div");
+      countText.className = "count";
+      countText.textContent = count + " / " + job.required + " نفر";
+
+      const statusText = document.createElement("p");
+      statusText.textContent = status;
+
+      const buttons = document.createElement("div");
+      buttons.className = "buttons";
+
+      const addButton = document.createElement("button");
+      addButton.className = "add";
+      addButton.textContent = "+ افزایش";
+      addButton.addEventListener("click", function() {
+        changeCount(group, shift, job, 1);
+      });
+
+      const removeButton = document.createElement("button");
+      removeButton.className = "remove";
+      removeButton.textContent = "− کاهش";
+      removeButton.addEventListener("click", function() {
+        changeCount(group, shift, job, -1);
+      });
+
+      buttons.append(addButton, removeButton);
+      card.append(title, countText, statusText, buttons);
+      container.appendChild(card);
+    });
+  }
+
+  function changeCount(group, shift, job, amount) {
+    const key = getKey(group, shift, job.name);
+
+    assigned[key] = getAssigned(
+      group, shift, job.name, job.required
+    ) + amount;
+
+    if (assigned[key] < 0) {
+      assigned[key] = 0;
+    }
+
+    render();
+  }
+
+  document.getElementById("group").addEventListener("change", render);
+  document.getElementById("shift").addEventListener("change", render);
+
+  render();
+</script>
+
+</body>
+</html>
