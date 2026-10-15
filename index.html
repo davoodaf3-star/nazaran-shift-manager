@@ -429,5 +429,536 @@
   render();
 </script>
 
-</body>
+<style>
+  .schedule-panel {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 22px;
+    box-shadow: 0 3px 12px #173b5d0c;
+  }
+
+  .schedule-panel h2 {
+    font-size: 19px;
+    margin-top: 0;
+  }
+
+  .schedule-panel label {
+    display: block;
+    margin: 14px 0 7px;
+  }
+
+  .schedule-panel input,
+  .schedule-panel select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d7e0e9;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  .schedule-button {
+    background: #176b49;
+    color: white;
+    padding: 11px 16px;
+    border: 0;
+    border-radius: 8px;
+    margin-top: 14px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .schedule-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 18px;
+  }
+
+  .calendar-heading,
+  .calendar-day {
+    text-align: center;
+    padding: 9px 2px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .calendar-heading {
+    background: #eaf0f6;
+    font-weight: bold;
+  }
+
+  .calendar-day {
+    border: 1px solid #e0e6ed;
+    min-height: 45px;
+    background: white;
+    cursor: pointer;
+    color: #263445;
+  }
+
+  .calendar-day.selected {
+    background: #d9f4e2;
+    border-color: #58ae76;
+  }
+
+  .calendar-day:disabled {
+    cursor: default;
+    opacity: 0.35;
+  }
+
+  .calendar-day.empty {
+    border: 0;
+    background: transparent;
+    cursor: default;
+  }
+
+  .schedule-status {
+    padding: 12px;
+    border-radius: 8px;
+    background: #eaf3fc;
+    line-height: 2;
+    font-size: 13px;
+    margin-top: 15px;
+  }
+
+  .schedule-warning {
+    background: #fff0cc;
+  }
+
+  .calendar-navigation {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+
+  .calendar-navigation button {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px;
+    background: #e6ebf1;
+    font-family: inherit;
+    cursor: pointer;
+  }
+</style>
+
+<section class="schedule-panel">
+  <h2>تقویم ماهانه پیشنهاد شیفت</h2>
+
+  <p>
+    در این بخش می‌توان وضعیت روزهای ماه و زمان مجاز
+    برای پیشنهاد شیفت را بررسی کرد.
+  </p>
+
+  <div class="calendar-navigation">
+    <button type="button" id="previousMonth">ماه قبل</button>
+    <strong id="calendarTitle">تقویم شمسی</strong>
+    <button type="button" id="nextMonth">ماه بعد</button>
+  </div>
+
+  <div id="shiftCalendar" class="schedule-calendar"></div>
+
+  <div id="calendarStatus" class="schedule-status">
+    در حال بررسی زمان دسترسی...
+  </div>
+</section>
+
+<section class="schedule-panel">
+  <h2>تنظیمات زمان دسترسی</h2>
+
+  <p>
+    در نسخه آزمایشی، زمان شروع و پایان دوره پیشنهاد شیفت
+    را می‌توان در همین مرورگر تنظیم کرد.
+  </p>
+
+  <label for="proposalStart">شروع پیشنهاد شیفت</label>
+  <input type="datetime-local" id="proposalStart">
+
+  <label for="proposalEnd">پایان پیشنهاد شیفت</label>
+  <input type="datetime-local" id="proposalEnd">
+
+  <label for="proposalAccess">
+    وضعیت دوره پیشنهاد شیفت
+  </label>
+
+  <select id="proposalAccess">
+    <option value="auto">مطابق زمان‌بندی</option>
+    <option value="open">بازکردن موقت دوره</option>
+    <option value="closed">بستن دوره</option>
+  </select>
+
+  <button type="button" class="schedule-button" id="saveAccess">
+    ذخیره تنظیمات آزمایشی
+  </button>
+
+  <div id="accessStatus" class="schedule-status">
+    تنظیمات هنوز ذخیره نشده است.
+  </div>
+</section>
+
+<section class="schedule-panel">
+  <h2>ثبت آزمایشی پیشنهاد شیفت</h2>
+
+  <label for="proposalDate">تاریخ شیفت</label>
+  <input type="date" id="proposalDate">
+
+  <label for="proposalGroup">گروه کارکنان</label>
+  <select id="proposalGroup">
+    <option value="تکنسین‌های تصویربرداری">
+      تکنسین‌های تصویربرداری
+    </option>
+    <option value="کارکنان اداری">
+      کارکنان اداری
+    </option>
+  </select>
+
+  <label for="proposalShift">نوع شیفت</label>
+  <select id="proposalShift">
+    <option value="صبح">صبح</option>
+    <option value="عصر">عصر</option>
+    <option value="شب">شب</option>
+  </select>
+
+  <button type="button" class="schedule-button" id="addProposal">
+    ثبت پیشنهاد آزمایشی
+  </button>
+
+  <div id="proposalStatus" class="schedule-status">
+    هنوز پیشنهادی ثبت نشده است.
+  </div>
+</section>
+
+<script>
+(function () {
+  "use strict";
+
+  const storageKey = "nazaran-shift-demo-v2";
+
+  const persianFormatter = new Intl.DateTimeFormat(
+    "fa-IR-u-ca-persian",
+    {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric"
+    }
+  );
+
+  function persianParts(date) {
+    const parts = persianFormatter.formatToParts(date);
+    const result = {};
+
+    parts.forEach(function (part) {
+      if (part.type === "year") {
+        result.year = Number(part.value.replace(/[^\d]/g, ""));
+      }
+
+      if (part.type === "month") {
+        result.month = Number(part.value.replace(/[^\d]/g, ""));
+      }
+
+      if (part.type === "day") {
+        result.day = Number(part.value.replace(/[^\d]/g, ""));
+      }
+    });
+
+    return result;
+  }
+
+  function localDateTimeValue(date) {
+    const pad = function (number) {
+      return String(number).padStart(2, "0");
+    };
+
+    return date.getFullYear() + "-" +
+      pad(date.getMonth() + 1) + "-" +
+      pad(date.getDate()) + "T" +
+      pad(date.getHours()) + ":" +
+      pad(date.getMinutes());
+  }
+
+  function findPersianDate(year, month, day) {
+    const now = new Date();
+
+    for (let offset = -40; offset <= 400; offset++) {
+      const candidate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + offset
+      );
+
+      const p = persianParts(candidate);
+
+      if (
+        p.year === year &&
+        p.month === month &&
+        p.day === day
+      ) {
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
+  function readState() {
+    try {
+      const saved = localStorage.getItem(storageKey);
+
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.warn("Unable to read demo settings.", error);
+    }
+
+    const now = new Date();
+    const p = persianParts(now);
+
+    const startDay = findPersianDate(p.year, p.month, 20);
+    const endDay = findPersianDate(p.year, p.month, 25);
+
+    const start = startDay || now;
+    const end = endDay || now;
+
+    start.setHours(8, 0, 0, 0);
+    end.setHours(23, 59, 0, 0);
+
+    return {
+      start: localDateTimeValue(start),
+      end: localDateTimeValue(end),
+      mode: "auto",
+      proposals: []
+    };
+  }
+
+  let state = readState();
+  let visibleYear = persianParts(new Date()).year;
+  let visibleMonth = persianParts(new Date()).month;
+
+  function saveState() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      return true;
+    } catch (error) {
+      alert("مرورگر اجازه ذخیره تنظیمات را نداد.");
+      return false;
+    }
+  }
+
+  function isAccessOpen() {
+    if (state.mode === "open") return true;
+    if (state.mode === "closed") return false;
+
+    const now = Date.now();
+    const start = new Date(state.start).getTime();
+    const end = new Date(state.end).getTime();
+
+    return Number.isFinite(start) &&
+      Number.isFinite(end) &&
+      now >= start &&
+      now <= end;
+  }
+
+  function updateAccessStatus() {
+    const open = isAccessOpen();
+
+    document.getElementById("calendarStatus").textContent =
+      open
+        ? "دوره پیشنهاد شیفت در این نمونه باز است."
+        : "دوره پیشنهاد شیفت در این نمونه بسته است.";
+
+    document.getElementById("calendarStatus").className =
+      "schedule-status" + (open ? "" : " schedule-warning");
+
+    document.getElementById("accessStatus").textContent =
+      "وضعیت فعلی: " +
+      (open ? "باز" : "بسته") +
+      " — شروع: " + state.start +
+      " — پایان: " + state.end +
+      " — حالت: " +
+      ({
+        auto: "مطابق زمان‌بندی",
+        open: "بازکردن موقت",
+        closed: "بستن دستی"
+      }[state.mode] || state.mode);
+  }
+
+  function renderCalendar() {
+    const calendar = document.getElementById("shiftCalendar");
+    const title = document.getElementById("calendarTitle");
+
+    calendar.innerHTML = "";
+
+    title.textContent =
+      persianFormatter.format(
+        findPersianDate(visibleYear, visibleMonth, 1) ||
+        new Date()
+      ).replace(/[۰-۹]/g, function (digit) {
+        return String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+      });
+
+    const weekdays = [
+      "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه",
+      "چهارشنبه", "پنجشنبه", "جمعه"
+    ];
+
+    weekdays.forEach(function (day) {
+      const cell = document.createElement("div");
+      cell.className = "calendar-heading";
+      cell.textContent = day;
+      calendar.appendChild(cell);
+    });
+
+    const firstDay = findPersianDate(
+      visibleYear,
+      visibleMonth,
+      1
+    );
+
+    if (!firstDay) {
+      calendar.textContent = "ساخت تقویم این ماه ممکن نشد.";
+      return;
+    }
+
+    const offset = (firstDay.getDay() + 1) % 7;
+
+    for (let i = 0; i < offset; i++) {
+      const empty = document.createElement("div");
+      empty.className = "calendar-day empty";
+      calendar.appendChild(empty);
+    }
+
+    let date = new Date(firstDay);
+
+    while (true) {
+      const p = persianParts(date);
+
+      if (p.year !== visibleYear || p.month !== visibleMonth) {
+        break;
+      }
+
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "calendar-day";
+      cell.textContent = p.day;
+
+      const isoDate = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+
+      if (state.proposals.some(function (proposal) {
+        return proposal.date === isoDate;
+      })) {
+        cell.classList.add("selected");
+      }
+
+      cell.addEventListener("click", function () {
+        document.getElementById("proposalDate").value = isoDate;
+      });
+
+      calendar.appendChild(cell);
+
+      date.setDate(date.getDate() + 1);
+    }
+  }
+
+  document.getElementById("previousMonth").addEventListener(
+    "click",
+    function () {
+      visibleMonth--;
+
+      if (visibleMonth < 1) {
+        visibleMonth = 12;
+        visibleYear--;
+      }
+
+      renderCalendar();
+    }
+  );
+
+  document.getElementById("nextMonth").addEventListener(
+    "click",
+    function () {
+      visibleMonth++;
+
+      if (visibleMonth > 12) {
+        visibleMonth = 1;
+        visibleYear++;
+      }
+
+      renderCalendar();
+    }
+  );
+
+  document.getElementById("proposalStart").value = state.start;
+  document.getElementById("proposalEnd").value = state.end;
+  document.getElementById("proposalAccess").value = state.mode;
+
+  document.getElementById("saveAccess").addEventListener(
+    "click",
+    function () {
+      const start = document.getElementById("proposalStart").value;
+      const end = document.getElementById("proposalEnd").value;
+      const mode = document.getElementById("proposalAccess").value;
+
+      if (!start || !end || new Date(start) >= new Date(end)) {
+        alert("زمان شروع و پایان را درست وارد کن.");
+        return;
+      }
+
+      state.start = start;
+      state.end = end;
+      state.mode = mode;
+
+      if (saveState()) {
+        updateAccessStatus();
+        renderCalendar();
+        alert("تنظیمات آزمایشی ذخیره شد.");
+      }
+    }
+  );
+
+  document.getElementById("addProposal").addEventListener(
+    "click",
+    function () {
+      const date = document.getElementById("proposalDate").value;
+      const group = document.getElementById("proposalGroup").value;
+      const shift = document.getElementById("proposalShift").value;
+
+      if (!isAccessOpen()) {
+        document.getElementById("proposalStatus").textContent =
+          "ثبت پیشنهاد امکان‌پذیر نیست؛ دوره در حال حاضر بسته است.";
+        return;
+      }
+
+      if (!date) {
+        alert("ابتدا تاریخ شیفت را انتخاب کن.");
+        return;
+      }
+
+      state.proposals.push({
+        date: date,
+        group: group,
+        shift: shift,
+        createdAt: new Date().toISOString()
+      });
+
+      if (saveState()) {
+        document.getElementById("proposalStatus").textContent =
+          "پیشنهاد آزمایشی ثبت شد: " +
+          date + " — " + group + " — شیفت " + shift;
+
+        renderCalendar();
+      }
+    }
+  );
+
+  renderCalendar();
+  updateAccessStatus();
+})();
+          </script></body>
 </html>
