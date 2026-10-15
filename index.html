@@ -679,27 +679,26 @@
   }
 
   function findPersianDate(year, month, day) {
-    const now = new Date();
+  const start = new Date(2020, 2, 1);
+  const end = new Date(2035, 2, 1);
 
-    for (let offset = -40; offset <= 400; offset++) {
-      const candidate = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() + offset
-      );
+  for (
+    let candidate = new Date(start);
+    candidate < end;
+    candidate.setDate(candidate.getDate() + 1)
+  ) {
+    const p = persianParts(candidate);
 
-      const p = persianParts(candidate);
-
-      if (
-        p.year === year &&
-        p.month === month &&
-        p.day === day
-      ) {
-        return candidate;
-      }
+    if (
+      p.year === year &&
+      p.month === month &&
+      p.day === day
+    ) {
+      return new Date(candidate);
     }
+  }
 
-    return null;
+  return null;
   }
 
   function readState() {
