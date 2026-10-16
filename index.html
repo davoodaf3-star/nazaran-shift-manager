@@ -867,8 +867,11 @@ function persianParts(date) {
       }
 
       cell.addEventListener("click", function () {
-        document.getElementById("proposalDate").value = isoDate;
-      });
+  document.getElementById("proposalDate").value = isoDate;
+  document.getElementById("proposalDateDisplay").value =
+    persianFormatter.format(date);
+  renderCalendar();
+});
 
       calendar.appendChild(cell);
 
