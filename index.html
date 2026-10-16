@@ -645,26 +645,36 @@
     }
   );
 
-  function persianParts(date) {
-    const parts = persianFormatter.formatToParts(date);
-    const result = {};
-
-    parts.forEach(function (part) {
-      if (part.type === "year") {
-        result.year = Number(part.value.replace(/[^\d]/g, ""));
-      }
-
-      if (part.type === "month") {
-        result.month = Number(part.value.replace(/[^\d]/g, ""));
-      }
-
-      if (part.type === "day") {
-        result.day = Number(part.value.replace(/[^\d]/g, ""));
-      }
+  function toAsciiDigits(value) {
+  return String(value)
+    .replace(/[۰-۹]/g, function (digit) {
+      return String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+    })
+    .replace(/[٠-٩]/g, function (digit) {
+      return String("٠١٢٣٤٥٦٧٨٩".indexOf(digit));
     });
+}
 
-    return result;
-  }
+function persianParts(date) {
+  const parts = persianFormatter.formatToParts(date);
+  const result = {};
+
+  parts.forEach(function (part) {
+    if (part.type === "year") {
+      result.year = Number(toAsciiDigits(part.value));
+    }
+
+    if (part.type === "month") {
+      result.month = Number(toAsciiDigits(part.value));
+    }
+
+    if (part.type === "day") {
+      result.day = Number(toAsciiDigits(part.value));
+    }
+  });
+
+  return result;
+}
 
   function localDateTimeValue(date) {
     const pad = function (number) {
