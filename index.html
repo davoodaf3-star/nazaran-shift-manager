@@ -866,11 +866,20 @@ function persianParts(date) {
         cell.classList.add("selected");
       }
 
-      cell.addEventListener("click", function () {
+      const selectedDate = new Date(date);
+
+cell.addEventListener("click", function () {
   document.getElementById("proposalDate").value = isoDate;
+
   document.getElementById("proposalDateDisplay").value =
-    persianFormatter.format(date);
-  renderCalendar();
+    persianFormatter.format(selectedDate);
+
+  document.querySelectorAll("#shiftCalendar .calendar-day")
+    .forEach(function (day) {
+      day.classList.remove("selected");
+    });
+
+  cell.classList.add("selected");
 });
 
       calendar.appendChild(cell);
