@@ -852,7 +852,7 @@ function persianParts(date) {
       const cell = document.createElement("button");
       cell.type = "button";
       cell.className = "calendar-day";
-      cell.textContent = p.day;
+      cell.textContent = new Intl.NumberFormat("fa-IR").format(p.day);
 
       const isoDate = [
         date.getFullYear(),
